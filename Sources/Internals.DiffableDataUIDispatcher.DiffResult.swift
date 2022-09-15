@@ -190,7 +190,7 @@ extension Internals.DiffableDataUIDispatcher {
         
         // MARK: Private
         
-        @inlinable
+        @usableFromInline
         internal init(
             deleted: [Index] = [],
             inserted: [Index] = [],
@@ -219,13 +219,17 @@ extension Internals.DiffableDataUIDispatcher {
             internal var reference: Index?
             
             @usableFromInline
-            internal var deleteOffset = 0
+            internal var deleteOffset: Int
             
             @usableFromInline
-            internal var isTracked = false
+            internal var isTracked: Bool
             
-            @inlinable
-            init() {}
+            @usableFromInline
+             init() {
+                 self.reference = nil
+                 self.deleteOffset = 0
+                 self.isTracked = false
+             }
         }
         
         
@@ -252,9 +256,7 @@ extension Internals.DiffableDataUIDispatcher {
             @usableFromInline
             internal var position = 0
             
-            @inlinable
-            internal init(_ indices: ContiguousArray<Int>) {
-                
+            public init(_ indices: ContiguousArray<Int>) {
                 self.indices = indices
             }
             
@@ -292,11 +294,15 @@ extension Internals.DiffableDataUIDispatcher {
             @usableFromInline
             internal let pointer: UnsafePointer<T>
             
-            @inlinable
-            internal init(pointer: UnsafePointer<T>) {
-                
+            @usableFromInline
+            init(pointeeHashValue: Int, pointer: UnsafePointer<T>) {
                 self.pointeeHashValue = pointer.pointee.hashValue
                 self.pointer = pointer
+            }
+            
+            @inlinable
+            internal init(pointer: UnsafePointer<T>) {
+                self = TableKey(pointeeHashValue: pointer.pointee.hashValue, pointer: pointer)
             }
             
             
